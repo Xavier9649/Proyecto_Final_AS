@@ -1,0 +1,57 @@
+Dependencias (Se instalan con npm install)node_modules/Variables de Entorno (Seguridad).envLogs de erroresnpm-debug.log*yarn-debug.log*yarn-error.log*Archivos del sistema operativo.DS_StoreThumbs.dbCarpeta de subidas (Opcional: Si quieres subir las imágenes de prueba, comenta esta línea con #)uploads/
+### 🚀 Paso 2: Inicializar el Repositorio Local
+
+Ahora abre tu terminal (Git Bash) en la carpeta `RemodelPro-Backend` y ejecuta estos comandos en orden:
+
+1.  **Inicializar Git:**
+    ```bash
+    git init
+    ```
+
+2.  **Preparar los archivos (Stage):**
+    ```bash
+    git add .
+    ```
+    *(Este comando añade todo lo que hay en la carpeta, EXCEPTO lo que pusiste en `.gitignore`. Si revisas el estado con `git status`, verás que `node_modules` y `.env` no aparecen).*
+
+3.  **Guardar la primera versión (Commit):**
+    ```bash
+    git commit -m "Primer commit: Backend RemodelPro completo (Módulo 1)"
+    ```
+
+### 🚀 Paso 3: Crear el Repositorio en GitHub
+
+1.  Ve a [GitHub.com](https://github.com) e inicia sesión.
+2.  Haz clic en el botón **New** (o el signo `+` arriba a la derecha) para crear un nuevo repositorio.
+3.  **Repository name:** `RemodelPro-Backend`
+4.  **Description:** (Opcional) API REST para gestión de proyectos de remodelación.
+5.  **Public/Private:** Elige según tu preferencia.
+6.  **IMPORTANTE:** No marques ninguna casilla de "Initialize this repository with...". Queremos un repositorio vacío.
+7.  Haz clic en **Create repository**.
+
+### 🚀 Paso 4: Conectar y Subir
+
+GitHub te mostrará una pantalla con instrucciones. Busca la sección **"…or push an existing repository from the command line"** y copia los comandos. Serán similares a estos:
+
+1.  **Renombrar la rama principal:**
+    ```bash
+    git branch -M main
+    ```
+
+2.  **Conectar con GitHub:**
+    *(Reemplaza `TU_USUARIO` con tu nombre de usuario de GitHub)*
+    ```bash
+    git remote add origin https://github.com/TU_USUARIO/RemodelPro-Backend.git
+    ```
+
+3.  **Subir el código:**
+    ```bash
+    git push -u origin main
+# Directorios de dependencias
+/node_modules
+/dist
+/build
+
+# Archivos de lock
+package-lock.json
+# ... u otro lock file
