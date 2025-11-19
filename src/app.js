@@ -2,34 +2,46 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const path = require('path'); // Módulo de Node.js para manejar rutas
+const path = require('path'); 
 
 // --- Importación de Rutas ---
 const authRoutes = require("./routes/auth.routes");
 const proyectoRoutes = require("./routes/proyectos.routes");
-const auditoriaRoutes = require("./routes/auditoria.routes"); // <-- 1. IMPORTAR RUTAS NUEVAS
+const auditoriaRoutes = require("./routes/auditoria.routes"); 
+const cotizacionRoutes = require("./routes/cotizacion.routes"); // ✅ RUTA ACTIVADA
 
 const app = express();
 
+// --- CONFIGURACIÓN DE CORS ---
+// Permitimos explícitamente el origen de nuestro Frontend (Vite)
+// y habilitamos credentials para que las cookies/tokens pasen correctamente.
+app.use(cors({
+    origin: 'http://localhost:5173', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true, 
+}));
+
 // --- Middlewares de Seguridad y Logs ---
-app.use(express.json()); // Middleware para parsear bodies JSON (necesario para POST/PUT)
-app.use(cors()); // Permite peticiones de otros dominios (Frontend)
-app.use(helmet()); // Ayuda a asegurar la aplicación configurando varios headers HTTP
+app.use(express.json()); // Middleware para parsear bodies JSON
+app.use(helmet()); // Ayuda a asegurar la aplicación con headers HTTP
 app.use(morgan("dev")); // Log de peticiones en la consola
 
 // --- Configuración de Archivos Estáticos (Imágenes) ---
-// Expone la carpeta 'uploads' para que las imágenes subidas sean accesibles 
-// a través de http://localhost:4000/uploads/...
+// Permite acceder a las imágenes en http://localhost:4000/uploads/nombre_imagen.jpg
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // --- Rutas de la API ---
 
-// Ruta de prueba
+// Ruta de prueba base
 app.get("/", (req, res) => res.json({ message: "API RemodelPro funcionando 🚀" }));
 
-// Montaje de rutas
-app.use("/api/auth", authRoutes); // /api/auth/register, /api/auth/login
-app.use("/api/proyectos", proyectoRoutes); // /api/proyectos, /api/proyectos/:id
-app.use("/api/auditorias", auditoriaRoutes); // <-- 2. MONTAR RUTAS NUEVAS
+// Montaje de rutas principales
+app.use("/api/auth", authRoutes); 
+app.use("/api/proyectos", proyectoRoutes); 
+app.use("/api/auditorias", auditoriaRoutes); 
+
+// 🚨 IMPORTANTE: Esta ruta debe coincidir con lo que llama el Frontend en quotationService.js
+// Si en el front llamas a '/quotations', aquí debe ser '/api/quotations'
+app.use("/api/quotations", cotizacionRoutes); 
 
 module.exports = app;
