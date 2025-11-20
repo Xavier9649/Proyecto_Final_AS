@@ -5,6 +5,9 @@ import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: 'dist', // Esto es el valor por defecto. Si dice otra cosa, cámbialo a 'dist' o ajusta Vercel.
+  },
   
   // Carpeta raíz para Vite
   root: './frontend', 
