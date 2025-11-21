@@ -1,21 +1,28 @@
-// src/router/AppRouter.jsx - ¡VERSIÓN MODIFICADA CON RUTA DE ARQUITECTO!
+import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// --- Importaciones de Componentes de Layout y Router ---
+// --- Importaciones de Componentes de Layout y Seguridad ---
 import Layout from '../components/layout/Layout'; 
 import PrivateRoute from './PrivateRoute'; 
 
-// --- Importaciones de Vistas (Pages) ---
+// --- Importaciones de Vistas Públicas ---
 import Home from '../pages/Home';
 import Login from '../pages/Login'; 
 import Register from '../pages/Register';
 import Portfolio from '../pages/Portfolio';
 import ProjectDetail from '../pages/ProjectDetail';
 import QuoteRequest from '../pages/QuoteRequest'; 
+import Team from '../pages/Team'; // Página de Equipo
+import Privacy from '../pages/Privacy'; // Página Legal
+import Terms from '../pages/Terms';     // Página Legal
+import Contact from '../pages/Contact'; // Página de Contacto
+import Unauthorized from '../pages/Unauthorized'; // Página de Acceso Denegado
+
+// --- Importaciones de Vistas Privadas ---
 import ClientQuotations from '../pages/ClientQuotations'; 
 import AdminDashboard from '../pages/AdminDashboard'; 
-import ArchitectDashboard from '../pages/ArchitectDashboard'; // 👈 NUEVA PÁGINA
+import ArchitectDashboard from '../pages/ArchitectDashboard'; 
 
 // Componente Wrapper para manejar la animación de entrada y salida de cada página
 const AnimatedRoute = ({ children }) => (
@@ -34,20 +41,33 @@ export const AppRouter = () => {
     const location = useLocation();
 
     return (
+        // AnimatePresence permite animar el componente que "sale" (exit) de la vista
         <AnimatePresence mode="wait"> 
+            {/* La key es CRUCIAL para que framer-motion detecte el cambio de ruta */}
             <Routes location={location} key={location.pathname}> 
                 
                 {/* -------------------- RUTAS PÚBLICAS -------------------- */}
                 
+                {/* Home y Autenticación */}
                 <Route path="/" element={<Layout><AnimatedRoute><Home /></AnimatedRoute></Layout>} />
                 <Route path="/login" element={<Layout><AnimatedRoute><Login /></AnimatedRoute></Layout>} />
                 <Route path="/register" element={<Layout><AnimatedRoute><Register /></AnimatedRoute></Layout>} />
+                
+                {/* Páginas Informativas y Legales */}
+                <Route path="/equipo" element={<Layout><AnimatedRoute><Team /></AnimatedRoute></Layout>} />
+                <Route path="/privacy" element={<Layout><AnimatedRoute><Privacy /></AnimatedRoute></Layout>} />
+                <Route path="/terms" element={<Layout><AnimatedRoute><Terms /></AnimatedRoute></Layout>} />
+                <Route path="/contact" element={<Layout><AnimatedRoute><Contact /></AnimatedRoute></Layout>} />
+                <Route path="/unauthorized" element={<Layout><AnimatedRoute><Unauthorized /></AnimatedRoute></Layout>} />
+
+                {/* Portafolio y Cotización */}
                 <Route path="/portfolio" element={<Layout><AnimatedRoute><Portfolio /></AnimatedRoute></Layout>} />
                 <Route path="/portfolio/:id" element={<Layout><AnimatedRoute><ProjectDetail /></AnimatedRoute></Layout>} />
                 <Route path="/quote" element={<Layout><AnimatedRoute><QuoteRequest /></AnimatedRoute></Layout>} />
                 
                 {/* -------------------- RUTAS PRIVADAS -------------------- */}
                 
+                {/* CLIENTE: Mis Cotizaciones */}
                 <Route path="/mis-cotizaciones" element={
                     <PrivateRoute>
                         <Layout>
@@ -58,9 +78,9 @@ export const AppRouter = () => {
                     </PrivateRoute>
                 } />
                 
-                {/* 👈 NUEVA RUTA PRIVADA PARA ARQUITECTOS */}
+                {/* ARQUITECTO: Dashboard */}
                 <Route path="/architect-dashboard" element={
-                    <PrivateRoute requiredRole="architect"> {/* ROL REQUERIDO: architect */}
+                    <PrivateRoute requiredRole="architect"> 
                         <Layout>
                             <AnimatedRoute>
                                 <ArchitectDashboard /> 
@@ -69,7 +89,7 @@ export const AppRouter = () => {
                     </PrivateRoute>
                 } />
 
-                {/* Dashboard Admin (Requiere rol "admin") */}
+                {/* ADMIN: Dashboard Completo */}
                 <Route path="/admin" element={
                     <PrivateRoute requiredRole="admin">
                         <Layout>
@@ -81,7 +101,7 @@ export const AppRouter = () => {
                 } />
 
                 {/* Ruta 404 (Siempre al final) */}
-                <Route path="*" element={<Layout><AnimatedRoute><div>404: Página No Encontrada</div></AnimatedRoute></Layout>} />
+                <Route path="*" element={<Layout><AnimatedRoute><div className="text-center py-20 text-2xl text-gray-600">404: Página No Encontrada</div></AnimatedRoute></Layout>} />
 
             </Routes>
         </AnimatePresence>
