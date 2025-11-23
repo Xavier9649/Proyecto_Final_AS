@@ -22,11 +22,11 @@ router.post(
     handleCreateProject
 );
 
-// GET: Listar todos los Proyectos
-router.get('/', verifyToken, handleGetProjects);
+// GET: Listar todos los Proyectos (Público)
+router.get('/', handleGetProjects);
 
-// GET: Obtener Proyecto por ID
-router.get('/:id', verifyToken, handleGetProjectById);
+// GET: Obtener Proyecto por ID (Público)
+router.get('/:id', handleGetProjectById);
 
 // PUT: Actualizar Proyecto
 router.put(

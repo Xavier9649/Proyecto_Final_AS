@@ -2,34 +2,26 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const path = require('path'); // Módulo de Node.js para manejar rutas
+const path = require('path');
 
-// --- Importación de Rutas ---
 const authRoutes = require("./routes/auth.routes");
 const proyectoRoutes = require("./routes/proyectos.routes");
-const auditoriaRoutes = require("./routes/auditoria.routes"); // <-- 1. IMPORTAR RUTAS NUEVAS
+const auditoriaRoutes = require("./routes/auditoria.routes");
+const cotizacionRoutes = require("./routes/cotizaciones.routes"); // <--- 1. IMPORTAR
 
 const app = express();
 
-// --- Middlewares de Seguridad y Logs ---
-app.use(express.json()); // Middleware para parsear bodies JSON (necesario para POST/PUT)
-app.use(cors()); // Permite peticiones de otros dominios (Frontend)
-app.use(helmet()); // Ayuda a asegurar la aplicación configurando varios headers HTTP
-app.use(morgan("dev")); // Log de peticiones en la consola
+app.use(express.json());
+app.use(cors());
+app.use(helmet());
+app.use(morgan("dev"));
 
-// --- Configuración de Archivos Estáticos (Imágenes) ---
-// Expone la carpeta 'uploads' para que las imágenes subidas sean accesibles 
-// a través de http://localhost:4000/uploads/...
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-
-// --- Rutas de la API ---
-
-// Ruta de prueba
 app.get("/", (req, res) => res.json({ message: "API RemodelPro funcionando 🚀" }));
 
-// Montaje de rutas
-app.use("/api/auth", authRoutes); // /api/auth/register, /api/auth/login
-app.use("/api/proyectos", proyectoRoutes); // /api/proyectos, /api/proyectos/:id
-app.use("/api/auditorias", auditoriaRoutes); // <-- 2. MONTAR RUTAS NUEVAS
+app.use("/api/auth", authRoutes);
+app.use("/api/proyectos", proyectoRoutes);
+app.use("/api/auditorias", auditoriaRoutes);
+app.use("/api/quotations", cotizacionRoutes); // <--- 2. MONTAR (Esta línea faltaba)
 
 module.exports = app;

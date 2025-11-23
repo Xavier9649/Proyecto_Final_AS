@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemodelPro - Transformamos Espacios</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
+        .loader { border-top-color: #3498db; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Ocultar scrollbar en modales */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- ================== NAVBAR ================== -->
+    <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="app.renderPublic()">
+                    <i class="fa-solid fa-helmet-safety text-orange-500 text-2xl mr-2"></i>
+                    <span class="font-bold text-2xl tracking-tight text-gray-900">Remodel<span class="text-orange-500">Pro</span></span>
+                </div>
+                <!-- Menú -->
+                <div class="flex items-center space-x-4" id="nav-menu">
+                    <!-- Se llena dinámicamente con JS -->
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="h-16"></div> <!-- Spacer -->
+
+    <!-- ================== CONTENEDOR PRINCIPAL ================== -->
+    <div id="app-container" class="min-h-screen">
+        <!-- El contenido se inyecta aquí -->
+    </div>
+
+    <!-- ================== MODALES ================== -->
+    
+    <!-- 1. Modal Login -->
+    <div id="modal-login" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity duration-300">
+        <div class="bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg overflow-y-auto relative">
+            <div class="py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Iniciar Sesión</p>
+                    <div class="cursor-pointer z-50" onclick="ui.closeModal('modal-login')"><i class="fas fa-times"></i></div>
+                </div>
+                <form onsubmit="auth.login(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
+                        <input type="email" id="login-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                        <input type="password" id="login-pass" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <a href="#" onclick="ui.switchModal('modal-login', 'modal-forgot')" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Entrar</button>
+                </form>
+                <div class="mt-4 text-center text-sm">
+                    ¿No tienes cuenta? <a href="#" onclick="ui.switchModal('modal-login', 'modal-register')" class="text-blue-500 font-bold">Regístrate aquí</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal Registro -->
+    <div id="modal-register" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity duration-300">
+        <div class="bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg relative">
+            <div class="py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Registro de Cliente</p>
+                    <div class="cursor-pointer" onclick="ui.closeModal('modal-register')"><i class="fas fa-times"></i></div>
+                </div>
+                <form onsubmit="auth.register(event)" class="space-y-4">
+                    <input type="text" id="reg-name" placeholder="Nombre Completo" class="shadow border rounded w-full py-2 px-3" required>
+                    <input type="email" id="reg-email" placeholder="Correo Electrónico" class="shadow border rounded w-full py-2 px-3" required>
+                    <input type="password" id="reg-pass" placeholder="Contraseña" class="shadow border rounded w-full py-2 px-3" required>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Registrarse</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal Olvidé Contraseña -->
+    <div id="modal-forgot" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity duration-300">
+        <div class="bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg relative">
+            <div class="py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Recuperar Contraseña</p>
+                    <div class="cursor-pointer" onclick="ui.closeModal('modal-forgot')"><i class="fas fa-times"></i></div>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">Ingresa tu correo para recibir un enlace de recuperación.</p>
+                <input type="email" id="forgot-email" placeholder="Correo registrado" class="shadow border rounded w-full py-2 px-3 mb-4">
+                <button onclick="auth.forgotPassword()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Enviar Enlace</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Modal Cotización -->
+    <div id="modal-quote" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity duration-300">
+        <div class="bg-white w-11/12 md:max-w-lg mx-auto rounded shadow-lg relative">
+            <div class="py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Solicitar Cotización</p>
+                    <div class="cursor-pointer" onclick="ui.closeModal('modal-quote')"><i class="fas fa-times"></i></div>
+                </div>
+                <div class="mb-4 bg-gray-100 p-3 rounded">
+                    <p class="text-sm text-gray-500">Proyecto de interés:</p>
+                    <p class="font-bold text-lg" id="quote-project-name">...</p>
+                    <input type="hidden" id="quote-project-id">
+                </div>
+                <form onsubmit="client.sendQuote(event)" class="space-y-4">
+                    <!-- Datos pre-llenados si hay usuario, pero editables para el mensaje -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Mensaje / Detalles</label>
+                        <textarea id="quote-msg" rows="4" class="shadow border rounded w-full py-2 px-3" placeholder="Hola, me interesa este proyecto. Mi teléfono es..." required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Enviar Solicitud</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== LÓGICA JAVASCRIPT ================== -->
+    <script>
+        // Configuración Global
+        const API_URL = 'http://localhost:4000/api';
+        
+        // Estado de la App
+        const state = {
+            token: localStorage.getItem('token'),
+            user: JSON.parse(localStorage.getItem('user') || 'null'),
+            projects: []
+        };
+
+        // --- MÓDULO DE UI ---
+        const ui = {
+            toggleModal: (modalID) => {
+                const modal = document.getElementById(modalID);
+                modal.classList.toggle('opacity-0');
+                modal.classList.toggle('pointer-events-none');
+                document.body.classList.toggle('modal-active');
+            },
+            closeModal: (modalID) => {
+                const modal = document.getElementById(modalID);
+                modal.classList.add('opacity-0');
+                modal.classList.add('pointer-events-none');
+                document.body.classList.remove('modal-active');
+            },
+            switchModal: (closeId, openId) => {
+                ui.closeModal(closeId);
+                setTimeout(() => ui.toggleModal(openId), 200);
+            },
+            renderNav: () => {
+                const menu = document.getElementById('nav-menu');
+                if (state.user) {
+                    // Usuario Logueado
+                    let dashboardBtn = '';
+                    if (state.user.rol === 'ADMIN') dashboardBtn = `<button onclick="app.renderAdmin()" class="text-gray-600 hover:text-orange-500 font-semibold mx-2">Administración</button>`;
+                    else if (state.user.rol === 'ARCHITECT') dashboardBtn = `<button onclick="app.renderArchitect()" class="text-gray-600 hover:text-orange-500 font-semibold mx-2">Mis Trabajos</button>`;
+                    
+                    menu.innerHTML = `
+                        <span class="text-sm text-gray-500 mr-2">Hola, <b>${state.user.nombre}</b></span>
+                        <button onclick="app.renderPublic()" class="text-gray-600 hover:text-orange-500 font-semibold mx-2">Inicio</button>
+                        ${dashboardBtn}
+                        <button onclick="auth.logout()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">Salir</button>
+                    `;
+                } else {
+                    // Visitante
+                    menu.innerHTML = `
+                        <button onclick="ui.toggleModal('modal-login')" class="text-gray-600 hover:text-orange-500 font-semibold mx-4">Iniciar Sesión</button>
+                        <button onclick="ui.toggleModal('modal-register')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Registrarse</button>
+                    `;
+                }
+            }
+        };
+
+        // --- MÓDULO DE AUTH ---
+        const auth = {
+            login: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-pass').value;
+                
+                try {
+                    const res = await fetch(`${API_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                        state.token = data.token;
+                        state.user = data.usuario;
+                        localStorage.setItem('token', state.token);
+                        localStorage.setItem('user', JSON.stringify(state.user));
+                        ui.closeModal('modal-login');
+                        ui.renderNav();
+                        app.routeBasedOnRole();
+                    } else {
+                        alert(data.error);
+                    }
+                } catch (err) { console.error(err); alert('Error de conexión'); }
+            },
+            register: async (e) => {
+                e.preventDefault();
+                const nombre = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-pass').value;
+
+                try {
+                    const res = await fetch(`${API_URL}/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nombre, email, password })
+                    });
+                    if (res.ok) {
+                        alert('Registro exitoso. Por favor inicia sesión.');
+                        ui.switchModal('modal-register', 'modal-login');
+                    } else {
+                        const data = await res.json();
+                        alert(data.error);
+                    }
+                } catch (err) { alert('Error de conexión'); }
+            },
+            logout: () => {
+                localStorage.clear();
+                state.token = null;
+                state.user = null;
+                ui.renderNav();
+                app.renderPublic();
+            },
+            forgotPassword: async () => {
+                const email = document.getElementById('forgot-email').value;
+                try {
+                    const res = await fetch(`${API_URL}/auth/forgot-password`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await res.json();
+                    alert(data.message);
+                    ui.closeModal('modal-forgot');
+                } catch (err) { alert('Error al enviar correo'); }
+            }
+        };
+
+        // --- MÓDULO DE APP (VISTAS) ---
+        const app = {
+            init: () => {
+                ui.renderNav();
+                app.routeBasedOnRole(); // Si ya hay sesión, decidir a dónde ir, si no, ir a public
+            },
+            routeBasedOnRole: () => {
+                if (!state.user) return app.renderPublic();
+                
+                if (state.user.rol === 'ADMIN') app.renderAdmin();
+                else if (state.user.rol === 'ARCHITECT') app.renderArchitect();
+                else app.renderPublic(); // Cliente ve lo público pero con opciones extra
+            },
+            
+            // VISTA PÚBLICA (LANDING + PORTAFOLIO)
+            renderPublic: async () => {
+                const container = document.getElementById('app-container');
+                
+                // Hero Section HTML
+                const heroHtml = `
+                    <div class="bg-gray-900 text-white py-24">
+                        <div class="container mx-auto px-6 text-center">
+                            <h1 class="text-5xl font-bold mb-4">Diseño y Construcción de Alto Nivel</h1>
+                            <p class="text-xl text-gray-300 mb-8">Hacemos realidad el proyecto de tus sueños con los mejores arquitectos.</p>
+                            <a href="#portfolio" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition duration-300">Ver Proyectos</a>
+                        </div>
+                    </div>
+                `;
+
+                // Fetch Proyectos
+                try {
+                    const res = await fetch(`${API_URL}/proyectos`);
+                    const projects = await res.json();
+                    
+                    let projectsHtml = '';
+                    if(projects.length === 0) {
+                        projectsHtml = '<p class="text-center text-gray-500 w-full">No hay proyectos publicados aún.</p>';
+                    } else {
+                        projectsHtml = projects.map(p => {
+                            const mainImg = p.imagenes.find(i => i.esPrincipal) || p.imagenes[0];
+                            const imgUrl = mainImg ? `http://localhost:4000${mainImg.url}` : 'https://via.placeholder.com/400x300?text=Sin+Imagen';
+                            
+                            // Botón Cotizar (Solo si es cliente logueado)
+                            const quoteBtn = (state.user && state.user.rol === 'CLIENT') 
+                                ? `<button onclick="client.openQuote(${p.id}, '${p.nombre}')" class="w-full mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Solicitar Cotización</button>`
+                                : '';
+
+                            return `
+                                <div class="bg-white rounded shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+                                    <img class="w-full h-56 object-cover" src="${imgUrl}" alt="${p.nombre}">
+                                    <div class="px-6 py-4">
+                                        <div class="font-bold text-xl mb-2">${p.nombre}</div>
+                                        <p class="text-gray-700 text-base mb-2"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i> ${p.ubicacion}</p>
+                                        <p class="text-gray-600 text-sm line-clamp-3">${p.descripcion || 'Sin descripción detallada.'}</p>
+                                        ${quoteBtn}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    container.innerHTML = `
+                        ${heroHtml}
+                        <div id="portfolio" class="container mx-auto px-6 py-16">
+                            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Nuestro Portafolio</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                ${projectsHtml}
+                            </div>
+                        </div>
+                    `;
+
+                } catch (err) { container.innerHTML = `<p class="text-center text-red-500 mt-10">Error cargando proyectos: ${err.message}</p>`; }
+            },
+
+            // VISTA ADMIN
+            renderAdmin: async () => {
+                if(!state.user || state.user.rol !== 'ADMIN') return app.renderPublic();
+                const container = document.getElementById('app-container');
+                
+                // Cargar Auditoría
+                const resAudit = await fetch(`${API_URL}/auditorias`, { headers: {'Authorization': `Bearer ${state.token}`} });
+                const audits = await resAudit.json();
+
+                // Cargar Cotizaciones
+                const resQuotes = await fetch(`${API_URL}/quotations`, { headers: {'Authorization': `Bearer ${state.token}`} });
+                const quotes = await resQuotes.json();
+
+                container.innerHTML = `
+                    <div class="container mx-auto px-6 py-10">
+                        <h1 class="text-3xl font-bold mb-8">Panel de Administrador</h1>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Sección Gestión -->
+                            <div class="bg-white p-6 rounded shadow">
+                                <h2 class="text-xl font-bold mb-4 border-b pb-2">Gestión Rápida</h2>
+                                <div class="space-y-4">
+                                    <button onclick="alert('Funcionalidad CRUD completa disponible en Postman o en versiones futuras del frontend.')" class="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700">
+                                        <i class="fas fa-project-diagram mr-2"></i> Gestionar Proyectos (CRUD)
+                                    </button>
+                                    <button onclick="alert('Gestión de Arquitectos pendiente de implementación visual.')" class="w-full bg-purple-600 text-white py-3 rounded hover:bg-purple-700">
+                                        <i class="fas fa-users-cog mr-2"></i> Gestionar Arquitectos
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sección Auditoría -->
+                            <div class="bg-white p-6 rounded shadow">
+                                <h2 class="text-xl font-bold mb-4 border-b pb-2">Auditoría del Sistema</h2>
+                                <div class="h-64 overflow-y-auto text-sm bg-gray-50 p-2 border rounded">
+                                    ${audits.map(a => `
+                                        <div class="mb-2 border-b pb-1">
+                                            <span class="font-bold text-blue-600">${a.accion}</span> en <span class="text-gray-600">${a.entidad}</span>
+                                            <div class="text-xs text-gray-400">${new Date(a.createdAt).toLocaleString()} - User ID ${a.usuarioId}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección Cotizaciones -->
+                        <div class="mt-10 bg-white p-6 rounded shadow">
+                            <h2 class="text-xl font-bold mb-4 border-b pb-2">Cotizaciones Recibidas (${quotes.length})</h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full leading-normal">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Proyecto</th>
+                                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cliente</th>
+                                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Estado</th>
+                                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${quotes.map(q => `
+                                            <tr>
+                                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">${q.proyectoInteres?.nombre}</td>
+                                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">${q.cliente?.nombre}<br><span class="text-xs text-gray-500">${q.cliente?.email}</span></td>
+                                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><span class="relative inline-block px-3 py-1 font-semibold text-gray-900 leading-tight"><span aria-hidden class="absolute inset-0 opacity-50 rounded-full ${getColor(q.estado)}"></span><span class="relative">${q.estado}</span></span></td>
+                                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                    ${q.estado === 'PENDIENTE' ? `<button onclick="admin.assign('${q.id}')" class="text-blue-600 hover:text-blue-900">Asignar Arq</button>` : `<span class="text-gray-500 text-xs">Asignado a: ${q.arquitecto?.nombre || 'N/A'}</span>`}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // VISTA ARQUITECTO
+            renderArchitect: async () => {
+                if(!state.user || state.user.rol !== 'ARCHITECT') return app.renderPublic();
+                const container = document.getElementById('app-container');
+                
+                const res = await fetch(`${API_URL}/quotations`, { headers: {'Authorization': `Bearer ${state.token}`} });
+                const quotes = await res.json();
+
+                container.innerHTML = `
+                    <div class="container mx-auto px-6 py-10">
+                        <h1 class="text-3xl font-bold mb-8">Mis Asignaciones</h1>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${quotes.map(q => `
+                                <div class="bg-white rounded shadow p-6 border-l-4 ${getBorderColor(q.estado)}">
+                                    <h3 class="font-bold text-lg mb-2">${q.proyectoInteres?.nombre}</h3>
+                                    <p class="text-gray-600 text-sm mb-4">"${q.mensaje}"</p>
+                                    <div class="text-xs text-gray-500 mb-4">Cliente: ${q.cliente?.nombre} (${q.cliente?.email})</div>
+                                    
+                                    <div class="flex flex-col gap-2 mt-4">
+                                        <p class="text-sm font-bold">Estado: ${q.estado}</p>
+                                        ${q.estado !== 'FINALIZADA' ? `
+                                            <div class="flex gap-2">
+                                                <button onclick="arch.updateStatus(${q.id}, 'EN_REVISION')" class="flex-1 bg-blue-100 text-blue-700 py-1 rounded hover:bg-blue-200 text-xs">Revisar</button>
+                                                <button onclick="arch.updateStatus(${q.id}, 'FINALIZADA')" class="flex-1 bg-green-100 text-green-700 py-1 rounded hover:bg-green-200 text-xs">Finalizar</button>
+                                            </div>
+                                        ` : `<p class="text-green-600 text-sm font-bold">Precio Final: $${q.precioEstimado}</p>`}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // --- LOGICA DE CLIENTE ---
+        const client = {
+            openQuote: (id, nombre) => {
+                document.getElementById('quote-project-id').value = id;
+                document.getElementById('quote-project-name').innerText = nombre;
+                ui.toggleModal('modal-quote');
+            },
+            sendQuote: async (e) => {
+                e.preventDefault();
+                const proyectoId = document.getElementById('quote-project-id').value;
+                const mensaje = document.getElementById('quote-msg').value;
+
+                try {
+                    const res = await fetch(`${API_URL}/quotations`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.token}`
+                        },
+                        body: JSON.stringify({ proyectoId, mensaje })
+                    });
+                    if(res.ok) {
+                        alert('¡Solicitud enviada! Un arquitecto revisará tu caso.');
+                        ui.closeModal('modal-quote');
+                    } else {
+                        alert('Error al enviar solicitud.');
+                    }
+                } catch (err) { alert('Error de conexión'); }
+            }
+        };
+
+        // --- LOGICA DE ADMIN ---
+        const admin = {
+            assign: async (id) => {
+                const arqId = prompt("Ingresa el ID del Arquitecto para asignar esta tarea:");
+                if(!arqId) return;
+                
+                try {
+                    const res = await fetch(`${API_URL}/quotations/${id}/assign`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
+                        body: JSON.stringify({ arquitectoId: arqId })
+                    });
+                    if(res.ok) app.renderAdmin();
+                    else alert('Error al asignar (Verifica el ID)');
+                } catch(err) { alert('Error de conexión'); }
+            }
+        };
+
+        // --- LOGICA DE ARQUITECTO ---
+        const arch = {
+            updateStatus: async (id, estado) => {
+                let precio = null;
+                if(estado === 'FINALIZADA') {
+                    precio = prompt("Ingrese el precio estimado final ($):");
+                    if(!precio) return;
+                }
+
+                try {
+                    const res = await fetch(`${API_URL}/quotations/${id}/status`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
+                        body: JSON.stringify({ estado, precioEstimado: precio })
+                    });
+                    if(res.ok) app.renderArchitect();
+                    else alert('Error al actualizar');
+                } catch(err) { alert('Error de conexión'); }
+            }
+        };
+
+        // --- HELPERS ---
+        function getColor(status) {
+            if (status === 'PENDIENTE') return 'bg-gray-200';
+            if (status === 'ASIGNADA') return 'bg-yellow-200';
+            if (status === 'EN_REVISION') return 'bg-blue-200';
+            if (status === 'FINALIZADA') return 'bg-green-200';
+            return 'bg-gray-100';
+        }
+        function getBorderColor(status) {
+            if (status === 'PENDIENTE') return 'border-gray-400';
+            if (status === 'ASIGNADA') return 'border-yellow-400';
+            if (status === 'EN_REVISION') return 'border-blue-400';
+            if (status === 'FINALIZADA') return 'border-green-400';
+            return 'border-gray-200';
+        }
+
+        // INICIAR APP
+        app.init();
+
+    </script>
+</body>
+</html>

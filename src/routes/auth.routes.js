@@ -1,22 +1,28 @@
-// src/routes/auth.routes.js
 const express = require("express");
-const { handleRegister, handleLogin } = require("../controllers/auth.controller");
-const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
+const { 
+    handleRegister, 
+    handleLogin, 
+    handleForgotPassword, 
+    handleResetPassword 
+} = require("../controllers/auth.controller");
+const { verifyToken } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
-// Endpoints Públicos
+// --- Endpoints Públicos ---
 router.post("/register", handleRegister);
 router.post("/login", handleLogin);
 
-// Endpoints Protegidos (Para prueba)
-router.get("/perfil", verifyToken, (req, res) => {
-  // Devuelve los datos del payload del token
-  res.json({ message: "Datos del usuario autenticado", user: req.user });
-});
+// Recuperación de Contraseña
+// 1. Solicitar enlace de recuperación (envía correo con token)
+router.post("/forgot-password", handleForgotPassword); 
+// 2. Restablecer contraseña (recibe token y nueva contraseña)
+router.post("/reset-password", handleResetPassword);   
 
-router.get("/admin-only", verifyToken, checkRole(['ADMIN']), (req, res) => {
-  res.json({ message: "Acceso exclusivo para administradores" });
+// --- Endpoints Protegidos ---
+// Ejemplo de ruta protegida para obtener datos del perfil
+router.get("/perfil", verifyToken, (req, res) => {
+  res.json({ message: "Datos del usuario autenticado", user: req.user });
 });
 
 module.exports = router;

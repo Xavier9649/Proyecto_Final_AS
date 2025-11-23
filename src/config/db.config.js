@@ -1,4 +1,3 @@
-// src/config/db.config.js
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize(
@@ -18,10 +17,26 @@ const connectDB = async () => {
     try {
         await sequelize.authenticate();
         console.log('📦 Conexión a la base de datos MySQL establecida.');
-        // Sincroniza los modelos (crea las tablas si no existen)
+        
+        // =========================================================================
+        // === PASO CRÍTICO: REINICIO FORZADO PARA SOLUCIONAR "Too Many Keys" ===
+        // =========================================================================
+        // Usar { force: true } eliminará y recreará TODAS las tablas.
+        // Esto limpia los índices corruptos de intentos anteriores.
         await sequelize.sync({ alter: true }); 
+        
+        console.log('✅ Tablas sincronizadas y recreadas exitosamente.');
+
+        // =========================================================================
+        // === IMPORTANTE: VUELVE A CAMBIARLO DESPUÉS DE LA SINCRONIZACIÓN EXITOSA ===
+        // =========================================================================
+        // Después de que esta sincronización con 'force: true' funcione, 
+        // CAMBIA la línea de arriba a: await sequelize.sync({ alter: true });
+        // o simplemente: await sequelize.sync(); 
+        
     } catch (error) {
         console.error('❌ Error al conectar la DB:', error.message);
+        // Si el error persiste, podría indicar un problema de configuración de MySQL.
         process.exit(1); 
     }
 };
