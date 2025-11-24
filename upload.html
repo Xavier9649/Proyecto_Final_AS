@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Subir Imagen</title>
+</head>
+<body>
+  <h2>Subir imagen al proyecto</h2>
+
+  <input type="file" id="archivo" /><br><br>
+
+  <button onclick="subir()">Subir Imagen</button>
+
+  <script>
+    async function subir() {
+
+      const archivo = document.getElementById("archivo").files[0];
+
+      if (!archivo) {
+        alert("Selecciona una imagen primero");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("imagen", archivo);
+
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ4YXZpZXI5NjQ5QGdtYWlsLmNvbSIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzYzOTUyODkyLCJleHAiOjE3NjQwMzkyOTJ9.VCRnLS0tqPuJcpFmFJI3X3pdTVH2HbIKrhQJyEbFwDE";
+
+      const res = await fetch("http://localhost:4000/api/proyectos/1/images", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+      console.log(data);
+      alert(JSON.stringify(data));
+    }
+  </script>
+</body>
+</html>
+
