@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import projectService from '../services/projectService';
 import ProjectCard from '../components/ui/ProjectCard';
 
-const API_BASE_URL = 'http://localhost:4000'; // Backend URL
+const API_BASE_URL = 'https://proyecto-final-as.onrender.com:4000'; // Backend URL
 
 const Portfolio = () => {
   const [projects, setProjects] = useState([]);

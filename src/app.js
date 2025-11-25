@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json()); // <-- ESTE ES EL CRÍTICO
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["*"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -33,7 +33,7 @@ app.use(morgan("dev"));
 -----------------------------------*/
 app.use("/uploads", (req, res, next) => {
   res.set({
-    "Access-Control-Allow-Origin": "http://localhost:5173",
+    "Access-Control-Allow-Origin": "https://proyecto-final-as.onrender.com:5173",
     "Access-Control-Allow-Methods": "GET",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Cross-Origin-Resource-Policy": "cross-origin",

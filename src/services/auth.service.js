@@ -77,8 +77,8 @@ const forgotPassword = async (email) => {
 
     // 3. Construir el enlace de recuperación
     // NOTA: Esta URL debe apuntar a tu FRONTEND (React), no al backend.
-    // Por ahora usamos localhost:5173 que es el puerto por defecto de Vite.
-    const resetUrl = `http://localhost:5173/reset-password/${token}`; 
+    // Por ahora usamos https://proyecto-final-as.onrender.com:5173 que es el puerto por defecto de Vite.
+    const resetUrl = `https://proyecto-final-as.onrender.com:5173/reset-password/${token}`; 
     
     const message = `Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para crear una nueva:\n\n${resetUrl}\n\nEste enlace expirará en 1 hora.\nSi no solicitaste esto, ignora este correo.`;
 

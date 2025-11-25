@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaCalendarAlt, FaChevronLeft } from 'react-icons/fa';
 import projectService from '../services/projectService';
 
-const API_BASE_URL = 'http://localhost:4000';
+const API_BASE_URL = 'https://proyecto-final-as.onrender.com:4000';
 
 const ProjectDetail = () => {
   const { id } = useParams(); 
