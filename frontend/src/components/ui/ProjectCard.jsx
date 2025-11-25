@@ -13,7 +13,7 @@ const itemVariants = {
 const ProjectCard = ({ project, apiBaseUrl }) => {
   // Función para construir la URL completa de la imagen (usa la URL del backend)
   const getImageUrl = (filename) => {
-    // Las imágenes se sirven en: http://localhost:4000/uploads/proyectos/<nombre_archivo>
+    // Las imágenes se sirven en: https://proyecto-final-as.onrender.com:4000/uploads/proyectos/<nombre_archivo>
     return `${apiBaseUrl}/uploads/proyectos/${filename}`;
   };
 

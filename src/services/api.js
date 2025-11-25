@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // **IMPORTANTE:** Asegúrate de que esta URL base sea la correcta 
 // donde está corriendo el Backend de tu compañero (puerto 3000, 8080, etc.)
-const API_URL = 'http://localhost:4000/api'; 
+const API_URL = 'https://proyecto-final-as.onrender.com:4000/api'; 
 
 const api = axios.create({
   baseURL: API_URL,

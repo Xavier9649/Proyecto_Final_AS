@@ -16,7 +16,7 @@ const app = express();
 // Permitimos explícitamente el origen de nuestro Frontend (Vite)
 // y habilitamos credentials para que las cookies/tokens pasen correctamente.
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true, 
 }));
@@ -27,7 +27,7 @@ app.use(helmet()); // Ayuda a asegurar la aplicación con headers HTTP
 app.use(morgan("dev")); // Log de peticiones en la consola
 
 // --- Configuración de Archivos Estáticos (Imágenes) ---
-// Permite acceder a las imágenes en http://localhost:4000/uploads/nombre_imagen.jpg
+// Permite acceder a las imágenes en https://proyecto-final-as.onrender.com:4000/uploads/nombre_imagen.jpg
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // --- Rutas de la API ---
